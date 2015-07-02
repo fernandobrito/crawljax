@@ -9,18 +9,14 @@ import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-//TODO: delete the following imports
-import java.io.File;
-import org.openqa.selenium.firefox.FirefoxProfile;
-
 import org.junit.*;
 import org.junit.rules.TestRule;
 import org.junit.rules.Timeout;
 import org.openqa.selenium.Alert;
 import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -42,6 +38,8 @@ public class StandardFunctionsFlowTest {
 
 	private static String CONFIG_NAME = "TestConfiguration";
 	private static String CONFIG_URL = "http://demo.crawljax.com/";
+	private static String ORIGINAL_BROWSER = "Internet Explorer";
+	private static String BROWSER = "Mozilla Firefox";
 
 	private static String LOCAL_PLUGIN_NAME = "Test Plugin";
 	private static String LOCAL_PLUGIN_ID = "test-plugin";
@@ -101,6 +99,11 @@ public class StandardFunctionsFlowTest {
 		textBoxes.get(1).clear();
 		textBoxes.get(1).sendKeys(CONFIG_URL);
 
+		// Select browser
+		Select browser = new Select(
+				driver.findElement(By.xpath("//label[contains(text(),'Browser:')]/following-sibling::select")));
+		browser.selectByVisibleText(ORIGINAL_BROWSER);
+
 		// Click on Save Configuration link
 		List<WebElement> saveConfigurationLink =
 		        driver.findElements(By.linkText("Save Configuration"));
@@ -112,15 +115,22 @@ public class StandardFunctionsFlowTest {
 	}
 
 	private void editConfiguration() {
-		// Check if configuration Name and Url are the same we entered when creating configuration
-		WebElement nameSpan = driver
-				.findElements(By.xpath("//label[contains(text(),'Name:')]/following-sibling::input")).get(0);
-		assertTrue(nameSpan.getAttribute("value").equals(CONFIG_NAME));
+		/*
+		 * Changes on Overview tab: 
+		 * * Set Browser to BROWSER (after checking if ORIGINAL_BROWSER was selected on form)
+		 * * Set Maximum Crawl States to 3
+		 */
 
-		WebElement urlInput = driver
-				.findElements(By.xpath("//label[contains(text(),'Site:')]/following-sibling::input")).get(0);
-		assertTrue(urlInput.getAttribute("value").equals(CONFIG_URL));
+		// Check if browser is the same
+		Select browser = new Select(
+				driver.findElement(By.xpath("//label[contains(text(),'Browser:')]/following-sibling::select")));
+		WebElement option = browser.getFirstSelectedOption();
+		assertEquals(option.getText(), ORIGINAL_BROWSER);
 
+		// Edit browser
+		browser.selectByVisibleText(BROWSER);
+
+		// Edit Maximum Crawl States
 		WebElement maxCrawlStates =
 		        driver.findElements(
 		                By.xpath(
@@ -136,6 +146,18 @@ public class StandardFunctionsFlowTest {
 		                .get(0);
 		assertTrue(maxCrawlStates.getAttribute("value").equals("3"));
 
+		// Check if configuration Name and Url are the same we entered when creating configuration
+		WebElement nameSpan = driver
+				.findElements(By.xpath("//label[contains(text(),'Name:')]/following-sibling::input")).get(0);
+		assertTrue(nameSpan.getAttribute("value").equals(CONFIG_NAME));
+
+		WebElement urlInput = driver
+				.findElements(By.xpath("//label[contains(text(),'Site:')]/following-sibling::input")).get(0);
+		assertTrue(urlInput.getAttribute("value").equals(CONFIG_URL));
+
+		/*
+		 * Changes on Craw Rules tab
+		 */
 		WebElement crawlRulesLink = driver.findElements(By.linkText("Crawl Rules")).get(0);
 		followLink(crawlRulesLink);
 
@@ -185,7 +207,10 @@ public class StandardFunctionsFlowTest {
 		                .get(1);
 		fieldValueInput.clear();
 		fieldValueInput.sendKeys("FieldValue");
-		
+
+		/*
+		 * Changes on Assertions tab
+		 */
 		((JavascriptExecutor) driver).executeScript("scroll(250,0);");
 		WebElement assertionsLink = driver.findElements(By.partialLinkText("Assertions")).get(0);
 		followLink(assertionsLink);
