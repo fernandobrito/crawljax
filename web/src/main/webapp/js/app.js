@@ -130,12 +130,12 @@ app.run(['$rootScope', '$state', '$stateParams', '$http', 'configHttp', 'pluginH
          function($rootScope, $state, $stateParams, $http, configHttp, pluginHttp, historyHttp, socket){
 	$rootScope.$state = $state;
 	$rootScope.$stateParams = $stateParams;
-	
-	$rootScope.browsers = [{name: "Mozilla Firefox", value: "FIREFOX"}, 
-	                       {name: "Google Chrome", value: "CHROME"}, 
-	                       {name: "Internet Explorer", value: "INTERNET EXPLORER"}, 
+
+	$rootScope.browsers = [{name: "Mozilla Firefox", value: "FIREFOX"},
+	                       {name: "Google Chrome", value: "CHROME"},
+	                       {name: "Internet Explorer", value: "INTERNET_EXPLORER"}, 
 	                       {name: "PhantomJS", value:"PHANTOMJS"}];
-	
+
 	$rootScope.clickConditions = [
 		{name: "With Attribute (name=value):", value:"wAttribute"},
 		{name: "With Text:", value:"wText"},
